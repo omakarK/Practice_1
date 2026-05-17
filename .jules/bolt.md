@@ -1,0 +1,3 @@
+## 2025-05-17 - Optimizing Concurrent Reads with RWMutex
+**Learning:** Using `sync.Mutex` for read-heavy endpoints like `getTasksHandler` serializes all requests, even when they don't modify state. Switching to `sync.RWMutex` allows multiple concurrent readers, significantly reducing latency under load. Additionally, moving non-critical operations (like setting headers) outside the lock further reduces the time the lock is held.
+**Action:** Always prefer `sync.RWMutex` when a shared resource is mostly read. Minimize the critical section by moving independent operations outside the locked block. Use `b.RunParallel` in benchmarks to measure the impact of concurrent access.
