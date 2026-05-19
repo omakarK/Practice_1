@@ -1,0 +1,3 @@
+## 2025-05-15 - Optimize task retrieval with RWMutex
+**Learning:** In Go web servers with a high read-to-write ratio, using `sync.Mutex` for simple read operations can be a significant bottleneck during concurrent access. Switching to `sync.RWMutex` allows multiple goroutines to read simultaneously, drastically improving performance. Additionally, keeping non-thread-safe but independent operations (like setting HTTP headers) outside the critical section further reduces lock contention.
+**Action:** Always prefer `sync.RWMutex` over `sync.Mutex` for data structures that are frequently read but rarely updated. Ensure that only the minimal necessary code is held under lock.
