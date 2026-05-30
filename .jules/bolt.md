@@ -1,0 +1,3 @@
+## 2025-05-22 - Optimizing Read-Heavy Handlers with RWMutex
+**Learning:** In Go web services where read operations dominate, using a standard `sync.Mutex` creates unnecessary contention as readers block each other. Switching to `sync.RWMutex` and minimizing the critical section by moving non-shared resource operations (like setting HTTP headers) outside the lock can significantly reduce latency under parallel load.
+**Action:** Always prefer `sync.RWMutex` for data structures that are frequently read but occasionally written. Audit handlers to ensure that only the absolute minimum amount of code is executed within the critical section.
