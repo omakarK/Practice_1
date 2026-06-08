@@ -1,0 +1,3 @@
+## 2025-05-15 - RWMutex for Read-Intensive Go Handlers
+**Learning:** In Go web services where shared state (like slices of tasks) is frequently read but less frequently written, using a standard `sync.Mutex` creates unnecessary bottlenecking. Switching to `sync.RWMutex` allows concurrent reads, significantly improving throughput. Additionally, moving non-shared resource operations like `w.Header().Set` outside the critical section further reduces lock contention.
+**Action:** Always prefer `sync.RWMutex` for shared data structures that are primarily read, and keep critical sections as small as possible by moving I/O or header operations outside the lock.
