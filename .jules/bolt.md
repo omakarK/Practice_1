@@ -1,0 +1,3 @@
+## 2025-05-15 - RWMutex for Read-Heavy Handlers
+**Learning:** In Go web services with global state, using `sync.Mutex` for all operations creates a serial bottleneck for read-intensive handlers like GET requests. Upgrading to `sync.RWMutex` allows concurrent reads and significantly improves throughput under load. Moving non-shared resource operations (like setting HTTP headers) outside the lock further minimizes the critical section.
+**Action:** Always prefer `sync.RWMutex` when a shared resource has a high read-to-write ratio. Minimize the critical section by performing I/O and header manipulation outside the lock.
