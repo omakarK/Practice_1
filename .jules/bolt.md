@@ -1,0 +1,3 @@
+## 2025-05-15 - RWMutex for concurrent read handlers
+**Learning:** In Go web services where state is protected by a global mutex, using `sync.Mutex` for read-heavy handlers like `getTasksHandler` creates unnecessary contention. Switching to `sync.RWMutex` and using `RLock` allows multiple concurrent reads, significantly improving throughput. Additionally, moving non-state operations like `w.Header().Set` outside the lock minimizes the critical section.
+**Action:** Always prefer `sync.RWMutex` for shared state that is frequently read. Review handlers to move non-shared resource manipulations (e.g., setting HTTP headers) outside of the lock.
