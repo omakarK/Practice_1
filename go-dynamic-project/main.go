@@ -16,13 +16,19 @@ type Task struct {
 var (
 	tasks  = []Task{{ID: 1, Title: "Learn Go"}, {ID: 2, Title: "Build a dynamic website"}}
 	nextID = 3
-	mu     sync.Mutex
+	mu     sync.RWMutex
 )
 
+// getTasksHandler retrieves the tasks from the global store.
 func getTasksHandler(w http.ResponseWriter, r *http.Request) {
-	mu.Lock()
-	defer mu.Unlock()
+	// Optimization: Move header configuration outside of the lock critical section
+	// to minimize lock holding duration.
 	w.Header().Set("Content-Type", "application/json")
+
+	// Optimization: Upgrade sync.Mutex to sync.RWMutex to allow concurrent read
+	// access instead of serializing all requests with a write lock.
+	mu.RLock()
+	defer mu.RUnlock()
 	json.NewEncoder(w).Encode(tasks)
 }
 
