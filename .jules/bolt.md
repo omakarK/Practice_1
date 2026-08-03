@@ -1,0 +1,3 @@
+## 2025-05-22 - Upgraded Mutex to RWMutex & Reduced Lock Contention
+**Learning:** For high-concurrency or read-heavy endpoints such as `getTasksHandler`, utilizing a standard `sync.Mutex` serializes all incoming HTTP requests. Upgrading to a `sync.RWMutex` combined with `RLock` allows concurrent reads, and moving HTTP headers setup outside the critical locked section reduces lock hold time. This combination results in massive performance boosts in parallel benchmarks.
+**Action:** Always verify if state locks can use read locks, and always minimize the critical section of locks by moving non-state operations (like HTTP header configuration or standard encoding initialization) out of the lock block.
