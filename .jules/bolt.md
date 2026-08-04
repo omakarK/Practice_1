@@ -1,0 +1,3 @@
+## 2025-05-22 - Upgrading getTasksHandler Lock Concurrency in go-dynamic-project
+**Learning:** Exclusive lock (`sync.Mutex`) in read-heavy HTTP handlers like `getTasksHandler` serializes client requests and acts as a bottleneck. Upgrading to read-write lock (`sync.RWMutex`) allows concurrent read throughput. Minimizing critical section by moving static header settings outside the lock reduces lock contention.
+**Action:** Always inspect HTTP handlers returning global state for opportunities to upgrade to `sync.RWMutex`, and ensure header setting and encoder/response setup logic (where thread-safe) is kept outside the locked critical block.
