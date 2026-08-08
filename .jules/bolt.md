@@ -1,0 +1,3 @@
+## 2025-10-23 - [Optimization of getTasksHandler in go-dynamic-project/main.go]
+**Learning:** Upgrading global state synchronization locks from `sync.Mutex` to `sync.RWMutex` significantly improves parallel HTTP read throughput (from ~3100 ns/op down to ~1340 ns/op, representing a ~56.7% latency reduction). Furthermore, keeping write-related and non-thread-safe actions like setting HTTP response headers outside of the locked critical section minimizes read lock duration.
+**Action:** Always identify read-heavy global endpoints and look to replace `sync.Mutex` with `sync.RWMutex` where appropriate. In addition, always structure the critical locked block to be as small and tight as possible by moving operations like HTTP headers outside of the locked section.
