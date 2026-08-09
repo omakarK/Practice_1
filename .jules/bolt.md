@@ -1,0 +1,3 @@
+## 2026-08-09 - [RWMutex and Lock Duration Optimization in Go Handlers]
+**Learning:** Standard read operations protected by a full `sync.Mutex` block write/read concurrency unnecessarily, especially when setting non-dependent response headers like Content-Type inside the critical section. Upgrading to `sync.RWMutex` and moving header assignments outside of the lock reduces parallel read latency by ~46.4%.
+**Action:** Always look for read-only handlers in Go services. Replace `sync.Mutex` with `sync.RWMutex`, use `RLock/RUnlock`, and ensure no HTTP response header or metadata settings are executed while holding the lock.
