@@ -16,13 +16,17 @@ type Task struct {
 var (
 	tasks  = []Task{{ID: 1, Title: "Learn Go"}, {ID: 2, Title: "Build a dynamic website"}}
 	nextID = 3
-	mu     sync.Mutex
+	// Use RWMutex to allow concurrent read locks (RLock) in read-heavy handlers like getTasksHandler
+	mu     sync.RWMutex
 )
 
 func getTasksHandler(w http.ResponseWriter, r *http.Request) {
-	mu.Lock()
-	defer mu.Unlock()
+	// Set headers outside the critical section to keep lock duration as minimal as possible
 	w.Header().Set("Content-Type", "application/json")
+
+	// Use RLock for thread-safe concurrent reads without blocking other readers
+	mu.RLock()
+	defer mu.RUnlock()
 	json.NewEncoder(w).Encode(tasks)
 }
 
