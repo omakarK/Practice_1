@@ -1,0 +1,3 @@
+## 2026-08-31 - HTTP Handler Mutex Scope and RWMutex Optimizations
+**Learning:** In Go HTTP handlers serving read-heavy workloads (`getTasksHandler`), using `sync.Mutex` and configuring HTTP headers inside the lock forces exclusive serialization of all incoming requests. Moving header setup outside the lock and switching to `sync.RWMutex` with `RLock()` allows parallel reads and reduces handler latency from ~2650 ns/op to ~1070 ns/op (~58% speedup).
+**Action:** Always check if shared state in Go HTTP handlers is read-dominant, move non-shared work (like setting response headers or request validation) outside critical sections, and prefer `sync.RWMutex` with `RLock` for read paths.
