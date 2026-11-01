@@ -16,13 +16,18 @@ type Task struct {
 var (
 	tasks  = []Task{{ID: 1, Title: "Learn Go"}, {ID: 2, Title: "Build a dynamic website"}}
 	nextID = 3
-	mu     sync.Mutex
+	// ⚡ Bolt Optimization: Use sync.RWMutex instead of sync.Mutex so multiple read requests
+	// can access tasks concurrently without lock contention while keeping write safety.
+	mu sync.RWMutex
 )
 
 func getTasksHandler(w http.ResponseWriter, r *http.Request) {
-	mu.Lock()
-	defer mu.Unlock()
+	// Set header outside the lock to minimize time spent holding the lock
 	w.Header().Set("Content-Type", "application/json")
+
+	// Acquire shared read lock instead of exclusive mutex lock
+	mu.RLock()
+	defer mu.RUnlock()
 	json.NewEncoder(w).Encode(tasks)
 }
 
