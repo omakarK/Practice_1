@@ -1,0 +1,3 @@
+## 2026-08-31 - Read Contention with sync.Mutex vs sync.RWMutex
+**Learning:** Guarding read-heavy HTTP endpoints with a standard `sync.Mutex` serializes all incoming read requests and increases latency under concurrent traffic. Setting HTTP response headers inside the critical section further amplifies lock contention. Switching to `sync.RWMutex` with `RLock`/`RUnlock` and moving non-dependent operations (such as `w.Header().Set(...)`) outside the lock reduces parallel read latency by ~55-67% (from ~700-1000 ns/op down to ~230-315 ns/op).
+**Action:** When auditing Go HTTP handlers with shared in-memory data structures, check whether read handlers use exclusive locks and ensure header setting and other preparation logic take place outside the critical section.
